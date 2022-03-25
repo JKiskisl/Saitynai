@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Students>
+   <student>
+      <name>Justas</name>
+      <subject>Math</subject>
+   </student>
+   <student>
+      <name>Rapolas</name>
+      <subject>CSharp</subject>
+   </student>
+   <student>
+      <name>Jonas</name>
+      <subject>CSharp</subject>
+   </student>
+   <student>
+      <name>Antanas</name>
+      <subject>Math</subject>
+   </student>
+   <student>
+      <name>Rugile</name>
+      <subject>3D Design</subject>
+   </student>
+   <student>
+      <name>Benas</name>
+      <subject>Architecture</subject>
+   </student>
+   <student>
+      <name>Ieva</name>
+      <subject>Ruby</subject>
+   </student>
+   <student>
+      <name>Donatas</name>
+      <subject>C++</subject>
+   </student>
+   <student>
+      <name>Motiejus</name>
+      <subject>Philosophy</subject>
+   </student>
+   <student>
+      <name>Tomas</name>
+      <subject>Unity</subject>
+   </student>
+</Students>
