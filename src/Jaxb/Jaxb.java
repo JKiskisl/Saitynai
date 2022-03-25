@@ -1,8 +1,9 @@
-package Jaxb;
+package com.company.Jaxb;
 
 import javax.xml.bind.*;
-import javax.xml.transform.Result;
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.JAXBContext;
 
 
@@ -15,15 +16,23 @@ public class Jaxb
 
         try
         {
-            Student student = new Student("Xz","cbb");
-            JAXBContext jc = JAXBContext.newInstance(Student.class);
+
+            Student student = new Student();
+            student.setName("Xz");
+            student.setSubject("cbb");
+
+            School school = new School();
+
+            school.setStudents(Arrays.asList(student));
+
+            JAXBContext jc = JAXBContext.newInstance(School.class);
             Marshaller ms = jc.createMarshaller();
 
             ms.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
             //tai va cia kazkokia xujne ir pisa prota, ten kur tu siuntei ten naudoja visiskai kitoki liba,
             // bet cia turetu but viskas ok siaip nes sita koda is kazkur nupisau ir ten viskas rabotina tai idk whats wrong
-            ms.marshal(student, (Result) System.out);
+            ms.marshal(school, System.out);
             //VIRSUJ apie sita kalbu
             ms.marshal(student, new File("C:\\Users\\smics\\Desktop\\Saitynai\\src\\data\\Students.xml"));
         }
@@ -37,14 +46,16 @@ public class Jaxb
     {
         try
         {
-            JAXBContext jc = JAXBContext.newInstance(Student.class);
+            JAXBContext jc = JAXBContext.newInstance(School.class);
             Unmarshaller ums = jc.createUnmarshaller();
-            Student student = (Student) ums.unmarshal(new File("C:\\Users\\smics\\Desktop\\Saitynai\\src\\data\\Students.xml"));
+            School school = (School) ums.unmarshal(new File("C:\\Users\\smics\\Desktop\\Saitynai\\src\\data\\Students.xml"));
+            List<Student> students = school.getStudents();
 
-
-            System.out.println("Student info");
-            System.out.println("Name: " + student.getNameee());
-            System.out.println("Subject: "+ student.getSubjecttt());
+            for (Student student: students) {
+                System.out.println("Student info");
+                System.out.println("Name: " + student.getName());
+                System.out.println("Subject: "+ student.getSubject());
+            }
         }
         catch (Exception e)
         {
