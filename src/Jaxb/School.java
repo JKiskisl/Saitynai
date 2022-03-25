@@ -1,4 +1,4 @@
-package com.company.Jaxb;
+package Jaxb;
 
 import javax.xml.bind.annotation.*;
 import java.util.List;

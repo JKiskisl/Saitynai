@@ -1,4 +1,4 @@
-package com.company.Jaxb;
+package Jaxb;
 
 import javax.xml.bind.annotation.*;
 //student klase kur talpins is xml i paprasta object viska kas bus tame XML'e
