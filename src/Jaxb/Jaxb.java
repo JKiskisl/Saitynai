@@ -1,47 +1,79 @@
 package Jaxb;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.*;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.JAXBContext;
-
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import java.net.URL;
 
 
 public class Jaxb
 {
-    //tai cia sugeneruoja XML
-    public void marshall()
+
+    private final XMLInputFactory factory = XMLInputFactory.newInstance();
+
+
+    //to XML
+    public String Marshall(School school)
     {
 
-        try
-        {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(School.class);
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-            Student student = new Student();
-            student.setName("Xz");
-            student.setSubject("cbb");
+            File file = new File("Students.xml");
+            marshaller.marshal(school, file);
+            Path fileName = Path.of(file.getName());
 
-            School school = new School();
-
-            school.setStudents(Arrays.asList(student));
-
-            JAXBContext jc = JAXBContext.newInstance(School.class);
-            Marshaller ms = jc.createMarshaller();
-
-            ms.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-            //tai va cia kazkokia xujne ir pisa prota, ten kur tu siuntei ten naudoja visiskai kitoki liba,
-            // bet cia turetu but viskas ok siaip nes sita koda is kazkur nupisau ir ten viskas rabotina tai idk whats wrong
-            ms.marshal(school, System.out);
-            //VIRSUJ apie sita kalbu
-            ms.marshal(student, new File("C:\\Users\\smics\\Desktop\\Saitynai\\src\\data\\Students.xml"));
+            return Files.readString(fileName);
         }
         catch (Exception e)
         {
-            System.out.println(e);
+            System.out.println("An error has occurred: " + e.getMessage());
+            return null;
         }
     }
     //IS XML i paprasta object
+    public School unmarshalll(String Xml, boolean CheckSchema)
+    {
+        try
+        {
+            JAXBContext jaxbContext = JAXBContext.newInstance(School.class);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+            if (CheckSchema)
+            {
+                final URL schemaURL = Jaxb.class.getResource("/Students.xml");
+                SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
+                Schema schema = sf.newSchema(schemaURL);
+                unmarshaller.setSchema(schema);
+            }
+            InputStream stream = new ByteArrayInputStream(Xml.getBytes(StandardCharsets.UTF_8));
+            XMLEventReader eventReader = factory.createXMLEventReader(stream);
+            JAXBElement<School> userElement = unmarshaller.unmarshal(eventReader, School.class);
+
+
+            return userElement.getValue();
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+    /*
     public void unmarshall()
     {
         try
@@ -62,4 +94,6 @@ public class Jaxb
             System.out.println(e);
         }
     }
+
+     */
 }

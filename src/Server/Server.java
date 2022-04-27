@@ -4,51 +4,105 @@ import java.net.*;
 import java.io.*;
 
 
-//servo klase
-public class Server extends Thread {
 
-    private Socket socket = null;
-    private ServerSocket server = null;
-    private DataInputStream in = null;
+public class Server extends Thread
+{
+    private int port;
+    private ServerSocket serverSocket;
+    private Socket clientSocket;
+    private PrintWriter printWriter;
+    private BufferedReader bufferedReader;
 
-    @Override
+    /**
+     *
+     * @param port set port
+     */
+    public void setPort(int port)
+    {
+        this.port=port;
+    }
+
+    /**
+     *  runserver
+     */
     public void run()
     {
         try
         {
-            server = new ServerSocket(5000);
-            System.out.println("Server.Server started");
-            System.out.println("Waiting for a client...");
-            socket = server.accept();
-            System.out.println("Server.Client accepted");
-
-            in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-
-            String line = "";
-
-            while (!line.equals("Over"))
-            {
-                try
-                {
-                    line = in.readUTF();
-                    System.out.println(line);
-                }
-                catch (IOException i)
-                {
-                    System.out.println(i);
-                }
-            }
-            System.out.println("Closing connection");
-            socket.close();
-            in.close();
+            runServer();
         }
-        catch (IOException i)
+        catch (Exception e)
         {
-            System.out.println(i);
+            System.out.println(e.getMessage());
         }
     }
-/*    public static void main(String args[])
+
+    /**
+     *
+     * @throws Exception if error while running
+     */
+    public void runServer() throws Exception
     {
-        Server server = new Server(5000);
-    }*/
+        serverSocket = new ServerSocket(port);
+        System.out.println("Running");
+        clientSocket=serverSocket.accept();
+
+        printWriter = new PrintWriter(clientSocket.getOutputStream(), true);
+        bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+        printWriter.println("Local client server");
+        String resp = bufferedReader.readLine();
+        System.out.println("Local server got " + resp + " from client");
+
+        SendXML();
+    }
+
+    public void SendXML()
+    {
+        try
+        {
+            int temp = 0;
+            System.out.println("Sending xml to client");
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(Server.class.getResourceAsStream("/Students.xml"));
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream((clientSocket.getOutputStream()));
+            byte[] bytes = new byte[8192];
+
+            if ((temp = bufferedInputStream.read(bytes)) != -1)
+            {
+                bufferedOutputStream.write(bytes,0,temp);
+            }
+            bufferedOutputStream.flush();
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+        finally
+        {
+            stopServer();
+        }
+    }
+
+    public void stopServer()
+    {
+        try
+        {
+            printWriter.close();
+            bufferedReader.close();
+            clientSocket.close();
+            serverSocket.close();
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) throws Exception
+  {
+      Server server = new Server();
+      server.setPort(1001);
+      server.start();
+      server.join();
+  }
 }
